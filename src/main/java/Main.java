@@ -1,9 +1,7 @@
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.openqa.selenium.By;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -13,7 +11,7 @@ import java.util.Properties;
 public class Main {
     public static Properties properties;
 
-   public static void main(String... args) throws IOException {
+   public static void main(String[] args) throws IOException {
 //        System.out.println(ReadingParser.parse("трансформация в сайт_190617.xls"));
 //        ReadingParser2.parse2();
 //        ReadingParser2.readingSheet(super, fo);
@@ -28,6 +26,8 @@ public class Main {
                     System.out.println(link.getAddress());
                     Global.openBrowser(link.getAddress().toString());
                     Global.findByCss();
+                    Global.close();
+//                    Global.photo.click();
 //                    Global.findByCss(Global.element);
 //                    DriverInitializer.getToUrl(link.getAddress().toString());
                 }
