@@ -1,5 +1,6 @@
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.openqa.selenium.By;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,7 +26,10 @@ public class Main {
                 Hyperlink link = cell.getHyperlink();
                 if (link != null) {
                     System.out.println(link.getAddress());
-                    DriverInitializer.getToUrl(link.getAddress().toString());
+                    Global.openBrowser(link.getAddress().toString());
+                    Global.findByCss();
+//                    Global.findByCss(Global.element);
+//                    DriverInitializer.getToUrl(link.getAddress().toString());
                 }
             }
         }
