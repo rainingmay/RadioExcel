@@ -1,5 +1,6 @@
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.openqa.selenium.WebDriver;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,9 +10,9 @@ import java.util.Properties;
  * Created by ybalatc on 6/22/2017.
  */
 public class Main {
-    public static Properties properties;
+    public Properties properties;
 
-   public static void main(String[] args) throws IOException {
+   public static void main(String[] args) throws IOException, InterruptedException {
 //        System.out.println(ReadingParser.parse("трансформация в сайт_190617.xls"));
 //        ReadingParser2.parse2();
 //        ReadingParser2.readingSheet(super, fo);
@@ -25,7 +26,8 @@ public class Main {
                 if (link != null) {
                     System.out.println(link.getAddress());
                     Global.openBrowser(link.getAddress().toString());
-                    Global.findByCss();
+//                    Global.pageInitialization();
+                    BaseUrl.findByCss();
                     Global.close();
 //                    Global.photo.click();
 //                    Global.findByCss(Global.element);
