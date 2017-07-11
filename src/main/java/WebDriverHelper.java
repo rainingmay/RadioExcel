@@ -1,8 +1,12 @@
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by ybalatc on 6/23/2017.
@@ -45,7 +49,19 @@ public class WebDriverHelper {
         wait.until(ExpectedConditions.visibilityOf(element));
     }
     public static void waitForPage() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, 10, 250);
-        wait.wait(5);
+//        WebDriverWait wait = new WebDriverWait(driver, 2);
+//        wait.wait(2);
+        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+    }
+
+    @FindBy(css = "div[data-latest-bg]")
+    private WebElement photo;
+
+    public WebDriverHelper (WebDriver driver) {
+        PageFactory.initElements(driver, this);
+    }
+
+    public String getPhotoUrl() {
+        return photo.getAttribute("data-latest-bg");
     }
 }
