@@ -11,20 +11,50 @@ import java.io.IOException;
  */
 public class ExcelHelper {
     private static Workbook wbOut;
-    private static Sheet sheetOut1;
-    private static Row row0, row1, row2, row4, row5, row6, row7, row8, row9, row10;
-
+    private static Sheet sheetOut1, sheetIn2;
+    private static FileInputStream in;
+    private static HSSFWorkbook wbIn;
+    private static Row row0, row1, row2, row3, row4, row5, row6, row7, row8, row9, row10;
     private static Cell cell0Category, cell1Group, cell2KeyWords, cell3Code, cell4Name, cell5Price, cell6OptNumber,
             cell7OptPrice, cell8Year, cell9Note, cell10Package, cell11Producer, cell12Photo, cell13Photo, cell14Photo,
-            cell15Photo, cell16Photo, categoryField11Out;
+            cell15Photo, cell16Photo;
+    private static String cellIn0Category, cellIn1Group, cellIn2Name, cellIn4Year, cellIn3Note, cellIn5Package,
+            cellIn6Photo_, cellIn7Photo_, cellIn8Photo_, cellIn9Photo_, cellIn10Photo_;
+    private static int cellIn11Code, cellIn12Price, cellIn13OptNumber, cellIn14OptPrice;
+    private static Cell cellIn6Photo, cellIn7Photo, cellIn8Photo, cellIn9Photo, cellIn10Photo;
     static FileOutputStream fileOut;
-    int sheetIndex;
-    int rowIndex;
-    static int colIndex = 0;
+    private static WebDriverHelper baseUrl;
 
     public ExcelHelper() throws FileNotFoundException {
     }
 
+    public static void mainMethodReadAndWrite() throws IOException, InterruptedException {
+        createBookAndSheet();
+        in = new FileInputStream("ВсеНовПоступл на ..10_.xls");
+        wbIn = new HSSFWorkbook(in);
+        sheetIn2 = wbIn.getSheetAt(0);
+        WebDriverHelper.openBrowser();
+        baseUrl = new WebDriverHelper(WebDriverHelper.getDriver());
+        readingIncomingFileAndWriting(1, row1);
+        checkForCellFillness(2, row2);
+
+        checkForCellFillness(3, row3);
+        checkForCellFillness(4, row4);
+        checkForCellFillness(5, row5);
+        checkForCellFillness(6, row6);
+        checkForCellFillness(7, row7);
+        WebDriverHelper.close();
+        wbOut.write(fileOut);
+        wbIn.close();
+        fileOut.close();
+    }
+
+    public static void checkForCellFillness(int numberOfRow, Row row) throws IOException, InterruptedException {
+        Cell cell = sheetIn2.getRow(numberOfRow).getCell(0);
+        if (cell != null) {
+            readingIncomingFileAndWriting(numberOfRow, row);
+        }
+    }
 
     public static void createBookAndSheet() throws IOException {
         wbOut = new HSSFWorkbook();
@@ -32,7 +62,7 @@ public class ExcelHelper {
         row0 = sheetOut1.createRow((short) 0);
         row1 = sheetOut1.createRow((short) 1);
         row2 = sheetOut1.createRow((short) 2);
-        row4 = sheetOut1.createRow((short) 3);
+        row3 = sheetOut1.createRow((short) 3);
         row4 = sheetOut1.createRow((short) 4);
         row5 = sheetOut1.createRow((short) 5);
         row6 = sheetOut1.createRow((short) 6);
@@ -74,133 +104,92 @@ public class ExcelHelper {
         cell16Photo = row0.createCell(16);
         cell16Photo.setCellValue("Фото");
         fileOut = new FileOutputStream("workbook.xls");
-//        wbOut.write(fileOut);
     }
 
-    public static void readAndWrite() throws IOException, InterruptedException {
-        createBookAndSheet();
-        FileInputStream in = new FileInputStream("ВсеНовПоступл на ..10_.xls");
-        HSSFWorkbook wbIn = new HSSFWorkbook(in);
-        Sheet sheetIn2 = wbIn.getSheetAt(0);
-        String cellIn0Category = sheetIn2.getRow(1).getCell(0).getStringCellValue();
-        String cellIn1Group = sheetIn2.getRow(1).getCell(1).getStringCellValue();
-        String cellIn2Name = sheetIn2.getRow(1).getCell(2).getStringCellValue();
-        int cellIn11Code = Integer.valueOf((int) sheetIn2.getRow(1).getCell(11).getNumericCellValue());
-        int cellIn12Price = (int) Math.round(sheetIn2.getRow(1).getCell(12).getNumericCellValue());
-        int cellIn13OptNumber = Integer.valueOf((int) sheetIn2.getRow(1).getCell(13).getNumericCellValue());
-        int cellIn14OptPrice = Integer.valueOf((int) sheetIn2.getRow(1).getCell(14).getNumericCellValue());
-        String cellIn4Year = sheetIn2.getRow(1).getCell(4).getStringCellValue();
-        String cellIn3Note = sheetIn2.getRow(1).getCell(3).getStringCellValue();
-        String cellIn5Package = sheetIn2.getRow(1).getCell(5).getStringCellValue();
+    public static void readingIncomingFileAndWriting(int numberOfRow, Row row) throws IOException, InterruptedException {
+//        Cell cell = sheetIn2.getRow(numberOfRow).getCell(0);
+//        if (cell != null) {
+        cellIn0Category = sheetIn2.getRow(numberOfRow).getCell(0).getStringCellValue();
+        cellIn1Group = sheetIn2.getRow(numberOfRow).getCell(1).getStringCellValue();
+        cellIn2Name = sheetIn2.getRow(numberOfRow).getCell(2).getStringCellValue();
+        cellIn11Code = Integer.valueOf((int) sheetIn2.getRow(numberOfRow).getCell(11).getNumericCellValue());
+        cellIn12Price = (int) Math.round(sheetIn2.getRow(numberOfRow).getCell(12).getNumericCellValue());
+        cellIn13OptNumber = Integer.valueOf((int) sheetIn2.getRow(numberOfRow).getCell(13).getNumericCellValue());
+        cellIn14OptPrice = Integer.valueOf((int) sheetIn2.getRow(numberOfRow).getCell(14).getNumericCellValue());
+        cellIn4Year = sheetIn2.getRow(numberOfRow).getCell(4).getStringCellValue();
+        cellIn3Note = sheetIn2.getRow(numberOfRow).getCell(3).getStringCellValue();
+        cellIn5Package = sheetIn2.getRow(numberOfRow).getCell(5).getStringCellValue();
 
-        // to fix hyperlinks
-        String cellIn6Photo = sheetIn2.getRow(1).getCell(6).getStringCellValue();
-        String cellIn7Photo = sheetIn2.getRow(1).getCell(7).getStringCellValue();
-        String cellIn8Photo = sheetIn2.getRow(1).getCell(8).getStringCellValue();
-        String cellIn9Photo = sheetIn2.getRow(1).getCell(9).getStringCellValue();
-        String cellIn10Photo = sheetIn2.getRow(1).getCell(10).getStringCellValue();
-//
+        cellIn6Photo = sheetIn2.getRow(numberOfRow).getCell(6);
+        writeHyperlink(cellIn6Photo);
+        cellIn6Photo_ = cellIn6Photo.getStringCellValue();
+        System.out.println(cellIn6Photo_);
 
-        cell0Category = row1.createCell(0);
+        cellIn7Photo = sheetIn2.getRow(numberOfRow).getCell(7);
+        writeHyperlink(cellIn7Photo);
+        cellIn7Photo_ = cellIn7Photo.getStringCellValue();
+        System.out.println(cellIn7Photo_);
+
+        cellIn8Photo = sheetIn2.getRow(numberOfRow).getCell(8);
+        writeHyperlink(cellIn8Photo);
+        cellIn8Photo_ = cellIn8Photo.getStringCellValue();
+        System.out.println(cellIn8Photo_);
+
+        cellIn9Photo = sheetIn2.getRow(numberOfRow).getCell(9);
+        writeHyperlink(cellIn9Photo);
+        cellIn9Photo_ = cellIn9Photo.getStringCellValue();
+        System.out.println(cellIn9Photo_);
+
+        cellIn10Photo = sheetIn2.getRow(numberOfRow).getCell(10);
+        writeHyperlink(cellIn10Photo);
+        cellIn10Photo_ = cellIn10Photo.getStringCellValue();
+        System.out.println(cellIn10Photo_);
+
+        cell0Category = row.createCell(0);
         cell0Category.setCellValue(cellIn0Category);
-        cell1Group = row1.createCell(1);
+        cell1Group = row.createCell(1);
         cell1Group.setCellValue(cellIn1Group);
-        cell2KeyWords = row1.createCell(2);
+        cell2KeyWords = row.createCell(2);
         cell2KeyWords.setCellValue(cellIn1Group);
-        cell3Code = row1.createCell(3);
+        cell3Code = row.createCell(3);
         cell3Code.setCellValue(cellIn11Code);
-        cell4Name = row1.createCell(4);
+        cell4Name = row.createCell(4);
         cell4Name.setCellValue(cellIn2Name);
-        cell5Price = row1.createCell(5);
+        cell5Price = row.createCell(5);
         cell5Price.setCellValue(cellIn12Price);
-        cell6OptNumber = row1.createCell(6);
+        cell6OptNumber = row.createCell(6);
         cell6OptNumber.setCellValue(cellIn13OptNumber);
-        cell7OptPrice = row1.createCell(7);
+        cell7OptPrice = row.createCell(7);
         cell7OptPrice.setCellValue(cellIn14OptPrice);
-        cell8Year = row1.createCell(8);
+        cell8Year = row.createCell(8);
         cell8Year.setCellValue(cellIn4Year);
-        cell9Note = row1.createCell(9);
+        cell9Note = row.createCell(9);
         cell9Note.setCellValue(cellIn3Note);
-        cell10Package = row1.createCell(10);
+        cell10Package = row.createCell(10);
         cell10Package.setCellValue(cellIn5Package);
-
-
-        cell12Photo = row1.createCell(12);
-        cell12Photo.setCellValue(cellIn6Photo);
-        cell13Photo = row1.createCell(13);
-        cell12Photo.setCellValue(cellIn7Photo);
-        cell14Photo = row1.createCell(14);
-        cell12Photo.setCellValue(cellIn8Photo);
-        cell15Photo = row1.createCell(15);
-        cell12Photo.setCellValue(cellIn9Photo);
-        cell16Photo = row1.createCell(16);
-        cell12Photo.setCellValue(cellIn10Photo);
-
-
-
-        wbOut.write(fileOut);
-        wbIn.close();
-        fileOut.close();
-    }
-
-    public static void readBook() throws IOException, InterruptedException {
-        FileInputStream in = new FileInputStream("ВсеНовПоступл на ..10_.xls");
-        HSSFWorkbook wbIn = new HSSFWorkbook(in);
-        Sheet sheetIn1 = wbIn.getSheetAt(0);
-        WebDriverHelper.openBrowser();
-        WebDriverHelper baseUrl = new WebDriverHelper(WebDriverHelper.getDriver());
-        for (Row row : sheetIn1) { // For each Row.
-            for (int cellIndex = 6; cellIndex <= 10; cellIndex++) {
-                Cell cell = row.getCell(cellIndex); // Get the Cell at the Index / Colum you want.
-                Hyperlink link = cell.getHyperlink();
-                        if (link != null) {
-//                            System.out.println(link.getAddress());
-//                            String result = cell.getStringCellValue();
-//                            System.out.println(result);
-//                    cell.setCellValue(link.getAddress());
-                            WebDriverHelper.getDriver().get(link.getAddress());
-                            WebDriverHelper.waitForPage();
-                            cell.setCellType(Cell.CELL_TYPE_STRING);
-                            System.out.println(baseUrl.getPhotoUrl());
-                            cell.setCellValue(baseUrl.getPhotoUrl());
-                            cell.setCellValue(baseUrl.getPhotoUrl());
-//                    cell.setCellValue(baseUrl.getPhotoUrl());
-                        } else {
-                            cell.setCellType(Cell.CELL_TYPE_STRING);
-                            cell.setCellValue("");
-                        }
-            }
+        cell12Photo = row.createCell(12);
+        cell12Photo.setCellValue(cellIn6Photo_);
+        cell13Photo = row.createCell(13);
+        cell13Photo.setCellValue(cellIn7Photo_);
+        cell14Photo = row.createCell(14);
+        cell14Photo.setCellValue(cellIn8Photo_);
+        cell15Photo = row.createCell(15);
+        cell15Photo.setCellValue(cellIn9Photo_);
+        cell16Photo = row.createCell(16);
+        cell16Photo.setCellValue(cellIn10Photo_);
         }
-        wbIn.close();
-        WebDriverHelper.close();
-    }
 
-
-    public static void readAndReWriteHyperlink() throws IOException, InterruptedException {
-        FileInputStream in = new FileInputStream("ВсеНовПоступл на ..10_.xls");
-        HSSFWorkbook wbIn = new HSSFWorkbook(in);
-        Sheet sheetIn1 = wbIn.getSheetAt(0);
-        WebDriverHelper.openBrowser();
-        WebDriverHelper baseUrl = new WebDriverHelper(WebDriverHelper.getDriver());
-        for (Row row : sheetIn1) {
-            for (Cell cell : row) {
+    public static Cell writeHyperlink(Cell cell) throws IOException, InterruptedException {
                 Hyperlink link = cell.getHyperlink();
+                cell.setCellType(Cell.CELL_TYPE_STRING);
                 if (link != null) {
-                    System.out.println(link.getAddress());
-//                    cell.setCellValue(link.getAddress());
                     WebDriverHelper.getDriver().get(link.getAddress());
                     WebDriverHelper.waitForPage();
                     System.out.println(baseUrl.getPhotoUrl());
-//                    cell.setCellValue(baseUrl.getPhotoUrl());
+                    cell.setCellValue(baseUrl.getPhotoUrl());
                 } else {
-                    cell.setCellType(Cell.CELL_TYPE_STRING);
                     cell.setCellValue("");
-                }
-            }
         }
-//        String result = wbIn.getSheetAt(0).getRow(1).getCell(0).getStringCellValue();
-//        System.out.println(result);
-        wbIn.close();
-        WebDriverHelper.close();
+        return cell;
     }
 }
