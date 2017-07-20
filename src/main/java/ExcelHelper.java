@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class ExcelHelper {
     private static Workbook wbOut;
-    private static Sheet sheetOut1, sheetIn1;
+    private static Sheet sheetOut1, sheetIn1, sheetIn2;
     private static FileInputStream in;
     private static HSSFWorkbook wbIn;
     private static Row row0, row1;
@@ -82,6 +82,7 @@ public class ExcelHelper {
         }
 
         fileOut = new FileOutputStream("workbook.xls");
+        //fileOut = new FileOutputStream("трансформация в сайт_030717.xls");
     }
 
     public static void readingIncomingFileAndWriting(int numberOfRow, Row row) throws IOException, InterruptedException {
@@ -162,5 +163,17 @@ public class ExcelHelper {
             cell.setCellValue("");
         }
         return cell;
+    }
+
+    public static void methodWriteGroup() throws IOException, InterruptedException {
+        in = new FileInputStream("трансформация в сайт_030717.xls");
+        wbIn = new HSSFWorkbook(in);
+        sheetIn1 = wbIn.getSheetAt(2);
+        sheetIn2 = wbIn.getSheetAt(3);
+        createBookAndSheet();
+        WebDriverHelper.close();
+        wbOut.write(fileOut);
+        wbIn.close();
+        fileOut.close();
     }
 }
