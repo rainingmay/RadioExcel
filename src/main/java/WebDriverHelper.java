@@ -44,10 +44,11 @@ public class WebDriverHelper {
         System.out.println(driver.getCurrentUrl());
     }
 
-    public void waitUntilElementVisible(WebElement element) {
-        WebDriverWait wait = new WebDriverWait(driver, 10, 250);
-        wait.until(ExpectedConditions.visibilityOf(element));
-    }
+//    public void waitUntilElementVisible(WebElement element) {
+//        WebDriverWait wait = new WebDriverWait(driver, 10, 250);
+//        wait.until(ExpectedConditions.visibilityOf(element));
+//    }
+
     public static void waitForPage() throws InterruptedException {
 //        WebDriverWait wait = new WebDriverWait(driver, 2);
 //        wait.wait(2);

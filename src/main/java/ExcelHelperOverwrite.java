@@ -6,88 +6,82 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-/**
- * Created by ybalatc on 7/11/2017.
- */
-public class ExcelHelper {
+public class ExcelHelperOverwrite {
     private static Workbook wbOut;
-    private static Sheet sheetOut1, sheetIn1, sheetIn2;
-    private static FileInputStream in;
+    private static Sheet sheetOut2, sheetIn1, sheetIn2;
+    private static FileInputStream in, out;
     private static HSSFWorkbook wbIn;
     private static Row row0, row1;
     private static Cell cell0Category, cell1Group, cell2KeyWords, cell3Code, cell4Name, cell5Price, cell6OptNumber,
             cell7OptPrice, cell8Year, cell9Note, cell10Package, cell11Producer, cell12Photo, cell13Photo, cell14Photo,
             cell15Photo, cell16Photo;
-    private static String cellIn0Category, cellIn1Group, cellIn2Name, cellIn4Year, cellIn3Note, cellIn5Package,
-            cellIn6Photo_, cellIn7Photo_, cellIn8Photo_, cellIn9Photo_, cellIn10Photo_;
+    private static java.lang.String cellIn0Category;
+    private static String cellIn1Group;
+    private static String cellIn2Name;
+    private static String cellIn4Year;
+    private static String cellIn3Note;
+    private static String cellIn5Package;
+    private static String cellIn6Photo_;
+    private static String cellIn7Photo_;
+    private static String cellIn8Photo_;
+    private static String cellIn9Photo_;
+    private static String cellIn10Photo_;
     private static int cellIn11Code, cellIn12Price, cellIn13OptNumber, cellIn14OptPrice;
     private static Cell cellIn6Photo, cellIn7Photo, cellIn8Photo, cellIn9Photo, cellIn10Photo;
     static FileOutputStream fileOut;
     private static WebDriverHelper baseUrl;
 
-    public static void mainMethodReadAndWrite() throws IOException, InterruptedException {
+    public static void mainMethodOverWrite() throws IOException, InterruptedException {
         in = new FileInputStream("ВсеНовПоступл на ..10_.xls");
         wbIn = new HSSFWorkbook(in);
         sheetIn1 = wbIn.getSheetAt(0);
+
+        out = new FileInputStream("трансформация в сайт_030717.xls");
+        wbOut = new HSSFWorkbook(out);
+        sheetOut2 = wbOut.getSheetAt(1);
+
         WebDriverHelper.openBrowser();
         baseUrl = new WebDriverHelper(WebDriverHelper.getDriver());
-        createBookAndSheet();
+
+        //first - deleted all old data at 2nd sheet
+        for (int i = 1; i < sheetOut2.getPhysicalNumberOfRows(); i++) {
+            row1 = sheetOut2.getRow(i);
+            sheetOut2.removeRow(row1);
+        }
+
+        //created all new rows
+        for (int i = 1; i < sheetIn1.getPhysicalNumberOfRows(); i++) {
+            row1 = sheetOut2.createRow(i);
+            readingIncomingFileAndWriting(i, row1);
+        }
+//fileOut = new FileOutputStream("трансформация в сайт_030717.xls");
         WebDriverHelper.close();
         wbOut.write(fileOut);
         wbIn.close();
         fileOut.close();
     }
 
-    public static void createBookAndSheet() throws IOException, InterruptedException {
-        wbOut = new HSSFWorkbook();
-        sheetOut1 = wbOut.createSheet("готово");
-        row0 = sheetOut1.createRow((short) 0);
-        cell0Category = row0.createCell(0);
-        cell0Category.setCellValue("Категория товаров");
-        cell1Group = row0.createCell(1);
-        cell1Group.setCellValue("Группа товаров");
-        cell2KeyWords = row0.createCell(2);
-        cell2KeyWords.setCellValue("Ключевые слова");
-        cell3Code = row0.createCell(3);
-        cell3Code.setCellValue("Код");
-        cell4Name = row0.createCell(4);
-        cell4Name.setCellValue("Наименование");
-        cell5Price = row0.createCell(5);
-        cell5Price.setCellValue("ЦенаГрн");
-        cell6OptNumber = row0.createCell(6);
-        cell6OptNumber.setCellValue("ОптомОт");
-        cell7OptPrice = row0.createCell(7);
-        cell7OptPrice.setCellValue("ОптЦгрн");
-        cell8Year = row0.createCell(8);
-        cell8Year.setCellValue("Год");
-        cell9Note = row0.createCell(9);
-        cell9Note.setCellValue("Примечание");
-        cell10Package = row0.createCell(10);
-        cell10Package.setCellValue("Упаковка");
-        cell11Producer = row0.createCell(11);
-        cell11Producer.setCellValue("Изготовитель");
-        cell12Photo = row0.createCell(12);
-        cell12Photo.setCellValue("Фото");
-        cell13Photo = row0.createCell(13);
-        cell13Photo.setCellValue("Фото");
-        cell14Photo = row0.createCell(14);
-        cell14Photo.setCellValue("Фото");
-        cell15Photo = row0.createCell(15);
-        cell15Photo.setCellValue("Фото");
-        cell16Photo = row0.createCell(16);
-        cell16Photo.setCellValue("Фото");
 
-        for (int i = 1; i < wbIn.getSheetAt(0).getPhysicalNumberOfRows(); i++) {
-            row1 = sheetOut1.createRow(i);
-            readingIncomingFileAndWriting(i, row1);
+    public static void methodWriteGroup() throws IOException, InterruptedException {
+        in = new FileInputStream("трансформация в сайт_030717.xls");
+        wbIn = new HSSFWorkbook(in);
+        sheetIn1 = wbIn.getSheetAt(1);
+        sheetIn2 = wbIn.getSheetAt(2);
+
+        for (int i = 1; i < sheetIn2.getPhysicalNumberOfRows(); i++) {
+           // sheetIn2.getRow(i).getCell()
         }
 
-        fileOut = new FileOutputStream("workbook.xls");
-        //fileOut = new FileOutputStream("трансформация в сайт_030717.xls");
+
+        // ? how to overwrite
+        fileOut = new FileOutputStream("трансформация в сайт_030717.xls");
+        wbIn.write(fileOut);
+        wbIn.close();
+        fileOut.close();
     }
 
     public static void readingIncomingFileAndWriting(int numberOfRow, Row row) throws IOException, InterruptedException {
-//        cellIn0Category = sheetIn1.getRow(numberOfRow).getCell(0).getStringCellValue();
+        cellIn0Category = sheetIn1.getRow(numberOfRow).getCell(0).getStringCellValue();
 //        cellIn1Group = sheetIn1.getRow(numberOfRow).getCell(1).getStringCellValue();
 //        cellIn2Name = sheetIn1.getRow(numberOfRow).getCell(2).getStringCellValue();
 //        cellIn11Code = Integer.valueOf((int) sheetIn1.getRow(numberOfRow).getCell(11).getNumericCellValue());
@@ -117,9 +111,9 @@ public class ExcelHelper {
 //        cellIn10Photo = sheetIn1.getRow(numberOfRow).getCell(10);
 //        writeHyperlink(cellIn10Photo);
 //        cellIn10Photo_ = cellIn10Photo.getStringCellValue();
-//
-//        cell0Category = row.createCell(0);
-//        cell0Category.setCellValue(cellIn0Category);
+
+        cell0Category = row.createCell(0);
+        cell0Category.setCellValue(cellIn0Category);
 //        cell1Group = row.createCell(1);
 //        cell1Group.setCellValue(cellIn1Group);
 //        cell2KeyWords = row.createCell(2);
@@ -165,4 +159,6 @@ public class ExcelHelper {
         }
         return cell;
     }
+
+
 }
