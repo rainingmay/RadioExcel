@@ -1,6 +1,7 @@
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.xpath.operations.String;
+import org.openqa.selenium.NoSuchElementException;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,7 +33,7 @@ public class ExcelHelperOverwrite {
     private static WebDriverHelper baseUrl;
 
     public static void mainMethodOverWrite() throws IOException, InterruptedException {
-        in = new FileInputStream("ВсеНовПоступл на ..10_.xls");
+        in = new FileInputStream("ВсеНовПоступл на ..10 (3).xls");
         wbIn = new HSSFWorkbook(in);
         sheetIn1 = wbIn.getSheetAt(0);
 
@@ -68,8 +69,13 @@ fileOut = new FileOutputStream("трансформация в сайт_030717.xl
         cellIn1Group = sheetIn1.getRow(numberOfRow).getCell(1).getStringCellValue();
         cellIn2Name = sheetIn1.getRow(numberOfRow).getCell(2).getStringCellValue();
         cellIn11Code = Integer.valueOf((int) sheetIn1.getRow(numberOfRow).getCell(11).getNumericCellValue());
-        cellIn12Price = (int) Math.round(sheetIn1.getRow(numberOfRow).getCell(12).getNumericCellValue());
+//        if (sheetIn1.getRow(numberOfRow).getCell(12) != null) {
+            cellIn12Price = (int) Math.round(sheetIn1.getRow(numberOfRow).getCell(12).getNumericCellValue());
+//        } else sheetIn1.getRow(numberOfRow).getCell(12).setCellValue("0");
+//        if (sheetIn1.getRow(numberOfRow).getCell(13) != null) {
         cellIn13OptNumber = Integer.valueOf((int) sheetIn1.getRow(numberOfRow).getCell(13).getNumericCellValue());
+//        } else cellIn13OptNumber = sheetIn1.getRow(numberOfRow).getCell(13).setCellValue(0);
+
         cellIn14OptPrice = (int) Math.round(sheetIn1.getRow(numberOfRow).getCell(14).getNumericCellValue());
 
         cellIn4Year = sheetIn1.getRow(numberOfRow).getCell(4).getStringCellValue();
@@ -130,7 +136,7 @@ fileOut = new FileOutputStream("трансформация в сайт_030717.xl
         cell16Photo.setCellValue(cellIn10Photo_);
     }
 
-    public static Cell writeHyperlink(Cell cell) throws IOException, InterruptedException {
+    public static Cell writeHyperlink(Cell cell) throws IOException, InterruptedException, NoSuchElementException {
         Hyperlink link = cell.getHyperlink();
         cell.setCellType(Cell.CELL_TYPE_STRING);
         if (link != null) {

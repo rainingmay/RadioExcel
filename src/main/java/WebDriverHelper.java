@@ -52,7 +52,7 @@ public class WebDriverHelper {
     public static void waitForPage() throws InterruptedException {
 //        WebDriverWait wait = new WebDriverWait(driver, 2);
 //        wait.wait(2);
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
     }
 
     @FindBy(css = "div[data-latest-bg]")
