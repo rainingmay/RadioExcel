@@ -32,12 +32,15 @@ public class ExcelHelperOverwrite {
     static FileOutputStream fileOut;
     private static WebDriverHelper baseUrl;
 
+    static java.lang.String inputFile = "ВсеНовПоступл на ..10.xls";
+    static java.lang.String outputFile = "трансформация в сайт_030717.xls";
+
     public static void mainMethodOverWrite() throws IOException, InterruptedException {
-        in = new FileInputStream("ВсеНовПоступл на ..10 (3).xls");
+        in = new FileInputStream(inputFile);
         wbIn = new HSSFWorkbook(in);
         sheetIn1 = wbIn.getSheetAt(0);
 
-        out = new FileInputStream("трансформация в сайт_030717.xls");
+        out = new FileInputStream(outputFile);
         wbOut = new HSSFWorkbook(out);
         sheetOut2 = wbOut.getSheetAt(1);
 
