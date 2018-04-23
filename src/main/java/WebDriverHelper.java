@@ -1,5 +1,7 @@
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -13,17 +15,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class WebDriverHelper {
 
-    private static final String FIREFOX_WEBDRIVER = "webdriver.gecko.driver";
-    private static final String WINDOWS_FIREFOX_WEBDRIVER_PATH = "src/main/resources/geckodriver.exe";
     private static volatile WebDriver driver;
 
-    private static void setSystemProperties(){
-        System.setProperty(FIREFOX_WEBDRIVER, WINDOWS_FIREFOX_WEBDRIVER_PATH);
-    }
 
     public static WebDriver openBrowser(){
-        setSystemProperties();
-        driver = new FirefoxDriver();
+        driver = new ChromeDriver();
         return driver;
     }
 
@@ -50,9 +46,12 @@ public class WebDriverHelper {
 //    }
 
     public static void waitForPage() throws InterruptedException {
-//        WebDriverWait wait = new WebDriverWait(driver, 2);
-//        wait.wait(2);
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+    }
+
+    public static void waitForElement(WebElement element) throws NoSuchElementException {
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        wait.until(ExpectedConditions.visibilityOf(element));
     }
 
     @FindBy(css = "div[data-latest-bg]")
@@ -63,6 +62,7 @@ public class WebDriverHelper {
     }
 
     public String getPhotoUrl() {
+        waitForElement(photo);
         return photo.getAttribute("data-latest-bg");
     }
 }

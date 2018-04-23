@@ -1,6 +1,5 @@
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.xpath.operations.String;
 import org.openqa.selenium.NoSuchElementException;
 
 import java.io.FileInputStream;
@@ -12,7 +11,7 @@ public class ExcelHelperOverwrite {
     private static Sheet sheetOut2, sheetIn1, sheetIn2;
     private static FileInputStream in, out;
     private static HSSFWorkbook wbIn;
-    private static Row row0, row1;
+    private static Row row0, row;
     private static Cell cell0Category, cell1Group, cell2KeyWords, cell3Code, cell4Name, cell5Price, cell6OptNumber,
             cell7OptPrice, cell8Year, cell9Note, cell10Package, cell11Producer, cell12Photo, cell13Photo, cell14Photo,
             cell15Photo, cell16Photo;
@@ -33,12 +32,13 @@ public class ExcelHelperOverwrite {
     private static WebDriverHelper baseUrl;
 
     static java.lang.String inputFile = "ВсеНовПоступл на ..10.xls";
-    static java.lang.String outputFile = "трансформация в сайт_030717.xls";
+    static java.lang.String outputFile = "трансформация в сайт.xls";
 
     public static void mainMethodOverWrite() throws IOException, InterruptedException {
         in = new FileInputStream(inputFile);
         wbIn = new HSSFWorkbook(in);
         sheetIn1 = wbIn.getSheetAt(0);
+
 
         out = new FileInputStream(outputFile);
         wbOut = new HSSFWorkbook(out);
@@ -48,26 +48,36 @@ public class ExcelHelperOverwrite {
         baseUrl = new WebDriverHelper(WebDriverHelper.getDriver());
 
         //first - deleted all old data at 2nd sheet
-        for (int i = 1; i < sheetOut2.getPhysicalNumberOfRows(); i++) {
-            row1 = sheetOut2.getRow(i);
-            if (row1 != null) {
-                sheetOut2.removeRow(row1);
+
+        int rowNumIn = sheetIn1.getPhysicalNumberOfRows();
+        int rowNumOut = sheetOut2.getPhysicalNumberOfRows();
+        if (rowNumIn < rowNumOut) {
+            for (int i = 0; i <= rowNumOut; i++) {
+                row = sheetOut2.getRow(rowNumIn + i);
+                if (row != null) {
+                    sheetOut2.removeRow(row);
+                }
             }
+        }
+        for (int i = 1; i < rowNumIn; i++) {
+            row = sheetOut2.getRow(i);
+            if (row == null) {
+                row = sheetOut2.createRow(i);
+                }
+            readingIncomingFileAndWriting(i, row);
         }
 
         //created all new rows
-        for (int i = 1; i < sheetIn1.getPhysicalNumberOfRows(); i++) {
-            row1 = sheetOut2.createRow(i);
-            readingIncomingFileAndWriting(i, row1);
-        }
-fileOut = new FileOutputStream("трансформация в сайт_030717.xls");
+
+
+fileOut = new FileOutputStream("трансформация в сайт.xls");
         WebDriverHelper.close();
         wbOut.write(fileOut);
         wbIn.close();
         fileOut.close();
     }
 
-    public static void readingIncomingFileAndWriting(int numberOfRow, Row row) throws IOException, InterruptedException {
+    public static void readingIncomingFileAndWriting(int numberOfRow, Row row) throws NullPointerException, InterruptedException {
         cellIn0Category = sheetIn1.getRow(numberOfRow).getCell(0).getStringCellValue();
         cellIn1Group = sheetIn1.getRow(numberOfRow).getCell(1).getStringCellValue();
         cellIn2Name = sheetIn1.getRow(numberOfRow).getCell(2).getStringCellValue();
@@ -139,14 +149,13 @@ fileOut = new FileOutputStream("трансформация в сайт_030717.xl
         cell16Photo.setCellValue(cellIn10Photo_);
     }
 
-    public static Cell writeHyperlink(Cell cell) throws IOException, InterruptedException, NoSuchElementException {
+    public static Cell writeHyperlink(Cell cell) throws NullPointerException, InterruptedException, NoSuchElementException {
         Hyperlink link = cell.getHyperlink();
         cell.setCellType(Cell.CELL_TYPE_STRING);
         if (link != null) {
             if (link.getAddress() != null) {
                 WebDriverHelper.getDriver().get(link.getAddress());
                 WebDriverHelper.waitForPage();
-                System.out.println(baseUrl.getPhotoUrl());
                 cell.setCellValue(baseUrl.getPhotoUrl());
             } else {
                 cell.setCellValue("");
